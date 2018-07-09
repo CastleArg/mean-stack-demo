@@ -13,7 +13,7 @@ export class PostsService {
     return [...this.posts];
   }
 
-getPostUpdateListner() {
+getPostUpdateListener() {
   return this.postsUpdated.asObservable();
 }
 
