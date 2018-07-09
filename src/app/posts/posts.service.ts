@@ -9,11 +9,12 @@ import { HttpClient } from '@angular/common/http';
 export class PostsService {
   private posts: Array<Post> = [];
   private postsUpdated = new Subject<Post[]>();
+  private baseURL = 'http://localhost:3000/api';
 
   constructor(private http: HttpClient) {}
 
   getPosts() {
-    this.http.get<{message: string, posts: Post[]}>('http://localhost:3000/api/posts').subscribe(
+    this.http.get<{message: string, posts: Post[]}>(`${this.baseURL}/posts`).subscribe(
       data => {
         this.posts = data.posts;
         this.postsUpdated.next([...this.posts]);
@@ -26,7 +27,14 @@ getPostUpdateListener() {
 }
 
   addPost(post: Post) {
-    this.posts.push(post);
-    this.postsUpdated.next([...this.posts]);
+    this.http.post(`${this.baseURL}/posts`, post)
+    .subscribe(
+      (data) => {
+        console.log(data);
+        this.posts.push(post);
+        this.postsUpdated.next([...this.posts]);
+      },
+      err => console.log(err)
+    );
   }
 }
