@@ -22,8 +22,8 @@ export class PostsService {
           title: p.title,
           content: p.content,
           id: p._id
-        }
-      })
+        };
+      });
     }))
     .subscribe(
       data => {
@@ -38,14 +38,26 @@ getPostUpdateListener() {
 }
 
   addPost(post: Post) {
-    this.http.post(`${this.baseURL}/posts`, post)
+    this.http.post<{createdPostId: string}>(`${this.baseURL}/posts`, post)
     .subscribe(
       (data) => {
         console.log(data);
+        post.id = data.createdPostId;
         this.posts.push(post);
         this.postsUpdated.next([...this.posts]);
       },
       err => console.log(err)
+    );
+  }
+
+  deletePost(postId: string) {
+    this.http.delete(`${this.baseURL}/posts/${postId}`)
+    .subscribe(
+      () => {
+        this.posts = this.posts.filter(post => post.id !== postId);
+        this.postsUpdated.next([...this.posts]);
+      },
+      e => console.log(e)
     );
   }
 }

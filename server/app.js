@@ -7,13 +7,13 @@ const app = express();
 
 mongoose
   .connect(
-   "your creds here"
+    "mongodb+srv://mark:iDAzXPdThYqaKRId@cluster0-y4p6h.mongodb.net/postdb?retryWrites=true"
   )
   .then(() => console.log("Connected to DB."))
   .catch(() => console.log("error connecting to db."));
 
 app.use((req, res, next) => {
-  res.setHeader("LAccess-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept"
@@ -31,14 +31,17 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.post("/api/posts", (req, res, next) => {
   const post = new Post({
     title: req.body.title,
-    content: req.body.title
+    content: req.body.content
   });
   console.log(post);
-  post.save();
-  res.status(201).json();
+  post.save()
+  .then((createdPost => {
+    res.status(201).json({createdPostId : createdPost._id});
+  }));
+
 });
 
-app.use("/api/posts", (req, res, next) => {
+app.get("/api/posts", (req, res, next) => {
   Post.find()
     .then(results => {
       console.log(results);
@@ -50,11 +53,21 @@ app.use("/api/posts", (req, res, next) => {
     .catch(() => res.status(500));
 });
 
+
 app.delete("/api/posts/:id", (req, res, next) => {
- console.log(req.params.id);
-  console.log(post);
-  post.save();
-  res.status(201).json();
-});
+  console.log(req.params.id);
+   console.log('deleting...');
+   Post.deleteOne({_id: req.params.id})
+   .then(() => {
+     res.status(201).json();
+   })
+   .catch((e) => {
+     console.log(e);
+       res.status(500).json(e.message);
+   })
+ });
+
+
+
 
 module.exports = app;
