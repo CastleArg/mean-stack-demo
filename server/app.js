@@ -7,7 +7,7 @@ const app = express();
 
 mongoose
   .connect(
-    "mongodb+srv://yourcredshere@cluster0-y4p6h.mongodb.net/postdb?retryWrites=true"
+    process.env.MONGO_ATLAS_CONNECTION
   )
   .then(() => console.log("Connected to DB."))
   .catch(() => console.log("error connecting to db."));
