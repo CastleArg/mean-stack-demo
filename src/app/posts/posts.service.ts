@@ -41,7 +41,6 @@ getPostUpdateListener() {
     this.http.post<{createdPostId: string}>(`${this.baseURL}/posts`, post)
     .subscribe(
       (data) => {
-        console.log(data);
         post.id = data.createdPostId;
         this.posts.push(post);
         this.postsUpdated.next([...this.posts]);

@@ -7,7 +7,7 @@ const app = express();
 
 mongoose
   .connect(
-    "mongodb+srv://mark:iDAzXPdThYqaKRId@cluster0-y4p6h.mongodb.net/postdb?retryWrites=true"
+    "mongodb+srv://yourcredshere@cluster0-y4p6h.mongodb.net/postdb?retryWrites=true"
   )
   .then(() => console.log("Connected to DB."))
   .catch(() => console.log("error connecting to db."));
@@ -33,7 +33,6 @@ app.post("/api/posts", (req, res, next) => {
     title: req.body.title,
     content: req.body.content
   });
-  console.log(post);
   post.save()
   .then((createdPost => {
     res.status(201).json({createdPostId : createdPost._id});
@@ -44,9 +43,8 @@ app.post("/api/posts", (req, res, next) => {
 app.get("/api/posts", (req, res, next) => {
   Post.find()
     .then(results => {
-      console.log(results);
       res.status(200).json({
-        message: "Ypu got the posts!",
+        message: "You got some posts!",
         posts: results
       });
     })
@@ -55,7 +53,6 @@ app.get("/api/posts", (req, res, next) => {
 
 
 app.delete("/api/posts/:id", (req, res, next) => {
-  console.log(req.params.id);
    console.log('deleting...');
    Post.deleteOne({_id: req.params.id})
    .then(() => {

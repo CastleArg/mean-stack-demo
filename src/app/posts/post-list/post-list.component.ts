@@ -10,13 +10,13 @@ import { Subscription } from 'rxjs';
 })
 export class PostListComponent implements OnInit, OnDestroy {
   posts = new Array<Post>();
-  postUpdateListnerSub: Subscription;
+  postUpdateListenerSub: Subscription;
 
   constructor(public postsService: PostsService) {}
 
   ngOnInit(): void {
     this.postsService.getPosts();
-    this.postUpdateListnerSub = this.postsService.getPostUpdateListener().subscribe(
+    this.postUpdateListenerSub = this.postsService.getPostUpdateListener().subscribe(
       (posts: Post[]) => {
         this.posts = posts;
       }
@@ -24,11 +24,10 @@ export class PostListComponent implements OnInit, OnDestroy {
   }
 
   onDelete(postId: string) {
-    console.log('in ondelete method');
     this.postsService.deletePost(postId);
   }
 
   ngOnDestroy() {
-    this.postUpdateListnerSub.unsubscribe();
+    this.postUpdateListenerSub.unsubscribe();
   }
 }
