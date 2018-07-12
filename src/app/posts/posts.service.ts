@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Subject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Post } from './post.model';
 import { HttpClient } from '@angular/common/http';
@@ -14,6 +14,10 @@ export class PostsService {
   private baseURL = environment.apiUrl;
 
   constructor(private http: HttpClient) {}
+
+  getPostUpdateListener() {
+    return this.postsUpdated.asObservable();
+  }
 
   getPosts() {
     this.http.get<{message: string, posts: any[]}>(`${this.baseURL}/posts`)
@@ -34,16 +38,32 @@ export class PostsService {
     );
   }
 
-getPostUpdateListener() {
-  return this.postsUpdated.asObservable();
-}
+  getPost(id: string): Observable<{_id: string, title: string, content: string}> {
+    return this.http.get<{_id: string, title: string, content: string}>(`${this.baseURL}/posts/${id}`);
+  }
 
-  addPost(post: Post) {
+  addPost(title: string, content: string) {
+    const post: Post = {id: null, title: title, content: content};
     this.http.post<{createdPostId: string}>(`${this.baseURL}/posts`, post)
     .subscribe(
       (data) => {
         post.id = data.createdPostId;
         this.posts.push(post);
+        this.postsUpdated.next([...this.posts]);
+      },
+      err => console.log(err)
+    );
+  }
+
+  updatePost(postId: string, title: string, content: string) {
+    const post: Post = {id: postId, title: title, content: content};
+    this.http.put(`${this.baseURL}/posts/${postId}`, post)
+    .subscribe(
+      () => {
+        const updatedPosts = [...this.posts];
+        const oldPostIndex = updatedPosts.findIndex(p => p.id === post.id);
+        updatedPosts[oldPostIndex] = post;
+        this.posts = updatedPosts;
         this.postsUpdated.next([...this.posts]);
       },
       err => console.log(err)
