@@ -20,3 +20,8 @@ run:
 - browse to localhost:3000 for server or localhost:4200 for UI
 - ????
 - profit
+
+
+Deployed on AWS at:
+
+http://mean-forum.s3-website.us-east-2.amazonaws.com/
