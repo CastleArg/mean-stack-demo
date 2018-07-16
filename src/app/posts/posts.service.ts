@@ -4,6 +4,7 @@ import { map } from 'rxjs/operators';
 import { Post } from './post.model';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,7 @@ export class PostsService {
   private postsUpdated = new Subject<Post[]>();
   private baseURL = environment.apiUrl;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
   getPostUpdateListener() {
     return this.postsUpdated.asObservable();
@@ -50,6 +51,7 @@ export class PostsService {
         post.id = data.createdPostId;
         this.posts.push(post);
         this.postsUpdated.next([...this.posts]);
+        this.router.navigate(['/']);
       },
       err => console.log(err)
     );
@@ -65,6 +67,7 @@ export class PostsService {
         updatedPosts[oldPostIndex] = post;
         this.posts = updatedPosts;
         this.postsUpdated.next([...this.posts]);
+        this.router.navigate(['/']);  // Don't think routing should be coupled to this method.
       },
       err => console.log(err)
     );
