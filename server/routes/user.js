@@ -50,7 +50,8 @@ router.post("/login",(req, res, next) => {
     console.log(process.env.JWT_TOKEN);
     const token = jwt.sign({email: dbUser.email, userId: dbUser._id}, process.env.JWT_TOKEN, { expiresIn: '1h'} );
     res.status(200).json({
-      token: token
+      token: token,
+      expiresIn: 3600
     });
   })
   .catch(err => {
